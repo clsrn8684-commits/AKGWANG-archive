@@ -11,7 +11,7 @@ const notoSerifKR = Noto_Serif_KR({
 })
 
 export const metadata: Metadata = {
-  title: '武林書齋',
+  title: '蜀南竹海',
   description: '동양 무협풍 아카이브',
 }
 
