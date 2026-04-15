@@ -12,6 +12,7 @@ interface ArchiveItem {
   title: string
   content: string
   images: string[]
+  link?: string
   createdAt: string
 }
 
@@ -33,11 +34,13 @@ export default function ArchivePage() {
     title: string
     content: string
     images: string[]
+    link: string
   }>({
     category: "",
     title: "",
     content: "",
-    images: [""],
+    images: [],
+    link: "",
   })
 
   useEffect(() => {
@@ -81,7 +84,7 @@ export default function ArchivePage() {
   const handlePasswordSuccess = () => {
     setShowPasswordDialog(false)
     if (pendingAction === "add") {
-      setNewItem({ category: categories[0] || "", title: "", content: "", images: [""] })
+      setNewItem({ category: categories[0] || "", title: "", content: "", images: [], link: "" })
       setShowAddDialog(true)
     } else if (pendingAction === "category") {
       setShowCategoryDialog(true)
@@ -105,19 +108,30 @@ export default function ArchivePage() {
     if (activeCategory === cat) setActiveCategory("all")
   }
 
-  const handleAddImage = () => {
-    setNewItem({ ...newItem, images: [...newItem.images, ""] })
-  }
-
   const handleRemoveImage = (index: number) => {
     const newImages = newItem.images.filter((_, i) => i !== index)
-    setNewItem({ ...newItem, images: newImages.length ? newImages : [""] })
+    setNewItem({ ...newItem, images: newImages })
   }
 
-  const handleImageChange = (index: number, value: string) => {
-    const newImages = [...newItem.images]
-    newImages[index] = value
-    setNewItem({ ...newItem, images: newImages })
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || [])
+    if (files.length === 0) return
+
+    const newImageUrls = await Promise.all(
+      files.map(
+        (file) =>
+          new Promise<string>((resolve) => {
+            const reader = new FileReader()
+            reader.onloadend = () => resolve(reader.result as string)
+            reader.readAsDataURL(file)
+          })
+      )
+    )
+
+    setNewItem((prev) => ({
+      ...prev,
+      images: [...prev.images, ...newImageUrls],
+    }))
   }
 
   const handleAddItem = () => {
@@ -129,11 +143,12 @@ export default function ArchivePage() {
       title: newItem.title,
       content: newItem.content,
       images: newItem.images.filter((url) => url.trim() !== ""),
+      link: newItem.link.trim() !== "" ? newItem.link.trim() : undefined,
       createdAt: new Date().toISOString(),
     }
 
     saveItems([item, ...items])
-    setNewItem({ category: categories[0] || "", title: "", content: "", images: [""] })
+    setNewItem({ category: categories[0] || "", title: "", content: "", images: [], link: "" })
     setShowAddDialog(false)
   }
 
@@ -300,6 +315,19 @@ export default function ArchivePage() {
                 </p>
               </div>
             )}
+
+            {selectedItem.link && (
+              <div className="border-t border-border p-4">
+                <a 
+                  href={selectedItem.link} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-primary hover:underline break-all"
+                >
+                  {selectedItem.link}
+                </a>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -396,69 +424,57 @@ export default function ArchivePage() {
               </div>
 
               <div>
-                <label className="mb-2 block text-sm text-muted-foreground">내용</label>
-                <textarea
-                  value={newItem.content}
-                  onChange={(e) => setNewItem({ ...newItem, content: e.target.value })}
-                  placeholder="내용..."
-                  rows={5}
-                  className="w-full resize-none border border-input bg-background px-4 py-2 text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
-                />
-              </div>
-
-              <div>
-                <div className="mb-2 flex items-center justify-between">
-                  <label className="text-sm text-muted-foreground">이미지 URL</label>
-                  <Button type="button" variant="ghost" size="sm" onClick={handleAddImage}>
-                    <Plus className="mr-1 h-3 w-3" />
-                    추가
-                  </Button>
+                  <label className="mb-2 block text-sm text-muted-foreground">링크 URL (선택)</label>
+                  <input
+                    type="url"
+                    value={newItem.link}
+                    onChange={(e) => setNewItem({ ...newItem, link: e.target.value })}
+                    placeholder="https://..."
+                    className="w-full border border-input bg-background px-4 py-2 text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
+                  />
                 </div>
-                <div className="space-y-2">
-                  {newItem.images.map((url, index) => (
-                    <div key={index} className="flex gap-2">
+
+                <div>
+                  <label className="mb-2 block text-sm text-muted-foreground">내용</label>
+                  <textarea
+                    value={newItem.content}
+                    onChange={(e) => setNewItem({ ...newItem, content: e.target.value })}
+                    placeholder="내용..."
+                    rows={5}
+                    className="w-full resize-none border border-input bg-background px-4 py-2 text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="mb-2 block text-sm text-muted-foreground">이미지 첨부</label>
+                  <div className="space-y-4">
+                    {newItem.images.length > 0 && (
+                      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                        {newItem.images.map((url, index) => (
+                          <div key={index} className="relative group aspect-square rounded-sm border border-border w-full overflow-hidden">
+                            <Image src={url} alt="업로드 이미지" fill className="object-cover" />
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleRemoveImage(index)}
+                              className="absolute top-1 right-1 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity bg-destructive/90 text-destructive-foreground hover:bg-destructive"
+                            >
+                              <X className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    
+                    <label className="flex w-full cursor-pointer items-center justify-center rounded-sm border border-dashed border-input bg-background px-4 py-8 hover:border-primary/50 hover:bg-accent transition-colors">
+                      <Plus className="mr-2 h-4 w-4 text-muted-foreground" />
+                      <span className="text-sm text-muted-foreground">새 이미지 업로드하기 (여러 장 선택 가능)</span>
                       <input
-                        type="url"
-                        value={url}
-                        onChange={(e) => handleImageChange(index, e.target.value)}
-                        placeholder="https://example.com/image.jpg"
-                        className="flex-1 border border-input bg-background px-4 py-2 text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        className="hidden"
+                        onChange={handleFileUpload}
                       />
-                      {newItem.images.length > 1 && (
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleRemoveImage(index)}
-                          className="text-destructive"
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-6 flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setShowAddDialog(false)}>
-                취소
-              </Button>
-              <Button onClick={handleAddItem} disabled={!newItem.title || !newItem.category}>
-                추가하기
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Password Dialog */}
-      <AdminPasswordDialog
-        open={showPasswordDialog}
-        onOpenChange={setShowPasswordDialog}
-        onSuccess={handlePasswordSuccess}
-      />
-    </div>
-  )
-}
+                    </label>

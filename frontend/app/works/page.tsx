@@ -14,6 +14,7 @@ interface WorkItem {
   title: string
   description: string
   images: string[]
+  link?: string
   createdAt: string
 }
 
@@ -42,11 +43,13 @@ export default function WorksPage() {
     title: string
     description: string
     images: string[]
+    link: string
   }>({
     category: "그림",
     title: "",
     description: "",
     images: [],
+    link: "",
   })
 
   useEffect(() => {
@@ -124,11 +127,12 @@ export default function WorksPage() {
       title: newItem.title,
       description: newItem.description,
       images: newItem.images.filter((url) => url.trim() !== ""),
+      link: newItem.link.trim() !== "" ? newItem.link.trim() : undefined,
       createdAt: new Date().toISOString(),
     }
 
     saveItems([item, ...items])
-    setNewItem({ category: "그림", title: "", description: "", images: [] })
+    setNewItem({ category: "그림", title: "", description: "", images: [], link: "" })
     setShowAddDialog(false)
   }
 
@@ -291,6 +295,19 @@ export default function WorksPage() {
                 <p className="whitespace-pre-wrap text-foreground">{selectedItem.description}</p>
               </div>
             )}
+
+            {selectedItem.link && (
+              <div className="border-t border-border p-4">
+                <a 
+                  href={selectedItem.link} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-primary hover:underline break-all"
+                >
+                  {selectedItem.link}
+                </a>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -331,6 +348,17 @@ export default function WorksPage() {
                   value={newItem.title}
                   onChange={(e) => setNewItem({ ...newItem, title: e.target.value })}
                   placeholder="작품 제목..."
+                  className="w-full border border-input bg-background px-4 py-2 text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm text-muted-foreground">링크 URL (선택)</label>
+                <input
+                  type="url"
+                  value={newItem.link}
+                  onChange={(e) => setNewItem({ ...newItem, link: e.target.value })}
+                  placeholder="https://..."
                   className="w-full border border-input bg-background px-4 py-2 text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
                 />
               </div>
