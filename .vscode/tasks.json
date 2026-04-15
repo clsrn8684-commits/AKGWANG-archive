@@ -1,0 +1,14 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Initialize Node.js Backend",
+			"type": "shell",
+			"command": "cd backend; npm init -y; npm install express cors dotenv; cd ..",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		}
+	]
+}
