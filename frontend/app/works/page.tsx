@@ -46,7 +46,7 @@ export default function WorksPage() {
     category: "그림",
     title: "",
     description: "",
-    images: [""],
+    images: [],
   })
 
   useEffect(() => {
@@ -89,19 +89,30 @@ export default function WorksPage() {
     setPendingAction(null)
   }
 
-  const handleAddImage = () => {
-    setNewItem({ ...newItem, images: [...newItem.images, ""] })
-  }
-
   const handleRemoveImage = (index: number) => {
     const newImages = newItem.images.filter((_, i) => i !== index)
-    setNewItem({ ...newItem, images: newImages.length ? newImages : [""] })
+    setNewItem({ ...newItem, images: newImages })
   }
 
-  const handleImageChange = (index: number, value: string) => {
-    const newImages = [...newItem.images]
-    newImages[index] = value
-    setNewItem({ ...newItem, images: newImages })
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || [])
+    if (files.length === 0) return
+
+    const newImageUrls = await Promise.all(
+      files.map(
+        (file) =>
+          new Promise<string>((resolve) => {
+            const reader = new FileReader()
+            reader.onloadend = () => resolve(reader.result as string)
+            reader.readAsDataURL(file)
+          })
+      )
+    )
+
+    setNewItem((prev) => ({
+      ...prev,
+      images: [...prev.images, ...newImageUrls],
+    }))
   }
 
   const handleAddItem = () => {
@@ -117,7 +128,7 @@ export default function WorksPage() {
     }
 
     saveItems([item, ...items])
-    setNewItem({ category: "그림", title: "", description: "", images: [""] })
+    setNewItem({ category: "그림", title: "", description: "", images: [] })
     setShowAddDialog(false)
   }
 
@@ -336,36 +347,38 @@ export default function WorksPage() {
               </div>
 
               <div>
-                <div className="mb-2 flex items-center justify-between">
-                  <label className="text-sm text-muted-foreground">이미지 URL</label>
-                  <Button type="button" variant="ghost" size="sm" onClick={handleAddImage}>
-                    <Plus className="mr-1 h-3 w-3" />
-                    추가
-                  </Button>
-                </div>
-                <div className="space-y-2">
-                  {newItem.images.map((url, index) => (
-                    <div key={index} className="flex gap-2">
-                      <input
-                        type="url"
-                        value={url}
-                        onChange={(e) => handleImageChange(index, e.target.value)}
-                        placeholder="https://example.com/image.jpg"
-                        className="flex-1 border border-input bg-background px-4 py-2 text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
-                      />
-                      {newItem.images.length > 1 && (
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleRemoveImage(index)}
-                          className="text-destructive"
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      )}
+                <label className="mb-2 block text-sm text-muted-foreground">이미지 첨부</label>
+                <div className="space-y-4">
+                  {newItem.images.length > 0 && (
+                    <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                      {newItem.images.map((url, index) => (
+                        <div key={index} className="relative group aspect-square rounded-sm border border-border w-full overflow-hidden">
+                          <Image src={url} alt="업로드 이미지" fill className="object-cover" />
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleRemoveImage(index)}
+                            className="absolute top-1 right-1 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity bg-destructive/90 text-destructive-foreground hover:bg-destructive"
+                          >
+                            <X className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      ))}
                     </div>
-                  ))}
+                  )}
+                  
+                  <label className="flex w-full cursor-pointer items-center justify-center rounded-sm border border-dashed border-input bg-background px-4 py-8 hover:border-primary/50 hover:bg-accent transition-colors">
+                    <Plus className="mr-2 h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm text-muted-foreground">새 이미지 업로드하기 (여러 장 선택 가능)</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      className="hidden"
+                      onChange={handleFileUpload}
+                    />
+                  </label>
                 </div>
               </div>
             </div>
