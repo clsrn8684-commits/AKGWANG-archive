@@ -3,7 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { ScrollText, BookOpen, Palette, MessageSquare, Archive, ImagePlus, X } from "lucide-react"
+import { ImagePlus, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { AdminPasswordDialog } from "@/components/admin-password-dialog"
 

@@ -5,27 +5,17 @@ import Link from "next/link"
 import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
-import { 
-  ScrollText, 
-  BookOpen, 
-  Palette, 
-  MessageSquare, 
-  Archive,
-  Home,
-  Menu,
-  X,
-  ImagePlus
-} from "lucide-react"
+import { Menu, X, ImagePlus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { AdminPasswordDialog } from "@/components/admin-password-dialog"
 
 const menuItems = [
-  { href: "/", label: "首頁", icon: Home, description: "메인" },
-  { href: "/logline", label: "綱要", icon: ScrollText, description: "로그라인" },
-  { href: "/narrative", label: "敍事", icon: BookOpen, description: "서사" },
-  { href: "/works", label: "作品", icon: Palette, description: "작품" },
-  { href: "/stories", label: "閑談", icon: MessageSquare, description: "썰" },
-  { href: "/archive", label: "備忘", icon: Archive, description: "티알 백업" },
+  { href: "/", label: "首頁", description: "메인" },
+  { href: "/logline", label: "綱要", description: "로그라인" },
+  { href: "/narrative", label: "敍事", description: "서사" },
+  { href: "/works", label: "作品", description: "작품" },
+  { href: "/stories", label: "閑談", description: "썰" },
+  { href: "/archive", label: "備忘", description: "티알 백업" },
 ]
 
 export function Sidebar() {
