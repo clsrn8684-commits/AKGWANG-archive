@@ -116,12 +116,6 @@ export function Sidebar() {
                         isActive && "border-l-primary bg-sidebar-accent text-primary font-medium"
                       )}
                     >
-                      <item.icon
-                        className={cn(
-                          "h-5 w-5 transition-colors",
-                          isActive ? "text-primary" : "text-muted-foreground"
-                        )}
-                      />
                       <div className="flex flex-col">
                         <span className="text-lg tracking-wider">{item.label}</span>
                         <span className="text-xs text-muted-foreground">{item.description}</span>

@@ -140,8 +140,7 @@ export default function HomePage() {
               className="group relative overflow-hidden border border-border bg-card p-6 transition-all duration-300 hover:border-primary/50 hover:bg-card/80"
             >
               <div className="absolute right-0 top-0 h-20 w-20 -translate-y-1/2 translate-x-1/2 rounded-full bg-primary/5 transition-transform duration-500 group-hover:scale-150" />
-              <ScrollText className="mb-4 h-8 w-8 text-primary/70 transition-colors group-hover:text-primary" />
-              <h3 className="text-2xl font-bold tracking-wider text-foreground mb-1">綱要</h3>
+              <h3 className="text-2xl font-bold tracking-wider text-foreground mb-1 mt-4">綱要</h3>
               <p className="text-sm text-primary/80">로그라인</p>
               <div className="absolute bottom-0 left-0 h-0.5 w-0 bg-primary transition-all duration-300 group-hover:w-full" />
             </Link>
@@ -152,8 +151,7 @@ export default function HomePage() {
               className="group relative overflow-hidden border border-border bg-card p-6 transition-all duration-300 hover:border-primary/50 hover:bg-card/80"
             >
               <div className="absolute right-0 top-0 h-20 w-20 -translate-y-1/2 translate-x-1/2 rounded-full bg-primary/5 transition-transform duration-500 group-hover:scale-150" />
-              <BookOpen className="mb-4 h-8 w-8 text-primary/70 transition-colors group-hover:text-primary" />
-              <h3 className="text-2xl font-bold tracking-wider text-foreground mb-1">敍事</h3>
+              <h3 className="text-2xl font-bold tracking-wider text-foreground mb-1 mt-4">敍事</h3>
               <p className="text-sm text-primary/80">서사</p>
               <div className="absolute bottom-0 left-0 h-0.5 w-0 bg-primary transition-all duration-300 group-hover:w-full" />
             </Link>
@@ -164,8 +162,7 @@ export default function HomePage() {
               className="group relative overflow-hidden border border-border bg-card p-6 transition-all duration-300 hover:border-primary/50 hover:bg-card/80"
             >
               <div className="absolute right-0 top-0 h-20 w-20 -translate-y-1/2 translate-x-1/2 rounded-full bg-primary/5 transition-transform duration-500 group-hover:scale-150" />
-              <Palette className="mb-4 h-8 w-8 text-primary/70 transition-colors group-hover:text-primary" />
-              <h3 className="text-2xl font-bold tracking-wider text-foreground mb-1">作品</h3>
+              <h3 className="text-2xl font-bold tracking-wider text-foreground mb-1 mt-4">作品</h3>
               <p className="text-sm text-primary/80">작품</p>
               <div className="absolute bottom-0 left-0 h-0.5 w-0 bg-primary transition-all duration-300 group-hover:w-full" />
             </Link>
@@ -215,8 +212,7 @@ export default function HomePage() {
               className="group relative overflow-hidden border border-border bg-card p-6 transition-all duration-300 hover:border-primary/50 hover:bg-card/80"
             >
               <div className="absolute right-0 top-0 h-20 w-20 -translate-y-1/2 translate-x-1/2 rounded-full bg-primary/5 transition-transform duration-500 group-hover:scale-150" />
-              <MessageSquare className="mb-4 h-8 w-8 text-primary/70 transition-colors group-hover:text-primary" />
-              <h3 className="text-2xl font-bold tracking-wider text-foreground mb-1">閑談</h3>
+              <h3 className="text-2xl font-bold tracking-wider text-foreground mb-1 mt-4">閑談</h3>
               <p className="text-sm text-primary/80">썰</p>
               <div className="absolute bottom-0 left-0 h-0.5 w-0 bg-primary transition-all duration-300 group-hover:w-full" />
             </Link>
@@ -227,8 +223,7 @@ export default function HomePage() {
               className="group relative overflow-hidden border border-border bg-card p-6 transition-all duration-300 hover:border-primary/50 hover:bg-card/80"
             >
               <div className="absolute right-0 top-0 h-20 w-20 -translate-y-1/2 translate-x-1/2 rounded-full bg-primary/5 transition-transform duration-500 group-hover:scale-150" />
-              <Archive className="mb-4 h-8 w-8 text-primary/70 transition-colors group-hover:text-primary" />
-              <h3 className="text-2xl font-bold tracking-wider text-foreground mb-1">備忘</h3>
+              <h3 className="text-2xl font-bold tracking-wider text-foreground mb-1 mt-4">備忘</h3>
               <p className="text-sm text-primary/80">티알 백업</p>
               <div className="absolute bottom-0 left-0 h-0.5 w-0 bg-primary transition-all duration-300 group-hover:w-full" />
             </Link>
