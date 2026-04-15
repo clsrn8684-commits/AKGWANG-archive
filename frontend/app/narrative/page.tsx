@@ -1,7 +1,8 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Plus, Trash2, X, FileText, Edit } from "lucide-react"
+import Image from "next/image"
+import { Plus, Trash2, X, FileText, Edit, ImagePlus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { AdminPasswordDialog } from "@/components/admin-password-dialog"
 
@@ -9,6 +10,7 @@ interface NarrativeItem {
   id: string
   title: string
   content: string
+  imageUrl?: string
   createdAt: string
   updatedAt: string
 }
@@ -21,7 +23,7 @@ export default function NarrativePage() {
   const [editingItem, setEditingItem] = useState<NarrativeItem | null>(null)
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null)
   const [selectedId, setSelectedId] = useState<string | null>(null)
-  const [newItem, setNewItem] = useState({ title: "", content: "" })
+  const [newItem, setNewItem] = useState<{ title: string; content: string; imageUrl?: string }>({ title: "", content: "" })
 
   useEffect(() => {
     const stored = localStorage.getItem("narrative-items")
@@ -46,7 +48,7 @@ export default function NarrativePage() {
 
   const handleEditClick = (item: NarrativeItem) => {
     setEditingItem(item)
-    setNewItem({ title: item.title, content: item.content })
+    setNewItem({ title: item.title, content: item.content, imageUrl: item.imageUrl })
     setPendingAction("edit")
     setShowPasswordDialog(true)
   }
@@ -84,6 +86,7 @@ export default function NarrativePage() {
         ...editingItem,
         title: newItem.title,
         content: newItem.content,
+        imageUrl: newItem.imageUrl,
         updatedAt: new Date().toISOString(),
       }
       const newItems = items.map((item) => (item.id === editingItem.id ? updated : item))
@@ -93,6 +96,7 @@ export default function NarrativePage() {
         id: Date.now().toString(),
         title: newItem.title,
         content: newItem.content,
+        imageUrl: newItem.imageUrl,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       }
@@ -106,6 +110,17 @@ export default function NarrativePage() {
   }
 
   const selectedItem = items.find((item) => item.id === selectedId)
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setNewItem(prev => ({ ...prev, imageUrl: reader.result as string }))
+      }
+      reader.readAsDataURL(file)
+    }
+  }
 
   return (
     <div className="flex min-h-screen bg-background">
@@ -185,6 +200,19 @@ export default function NarrativePage() {
                 </Button>
               </div>
             </div>
+            
+            {selectedItem.imageUrl && (
+              <div className="mb-8 w-full max-w-2xl overflow-hidden rounded-md border border-border/50">
+                <Image
+                  src={selectedItem.imageUrl}
+                  alt={selectedItem.title}
+                  width={800}
+                  height={400}
+                  className="w-full h-auto object-cover"
+                />
+              </div>
+            )}
+            
             <div className="mt-8 whitespace-pre-wrap text-foreground leading-loose">
               {selectedItem.content}
             </div>
@@ -210,7 +238,7 @@ export default function NarrativePage() {
               </Button>
             </div>
 
-            <div className="flex h-[calc(100%-120px)] flex-col gap-4">
+            <div className="flex h-[calc(100%-120px)] flex-col gap-4 overflow-y-auto pr-2">
               <div>
                 <label className="mb-2 block text-sm text-muted-foreground">제목</label>
                 <input
@@ -222,7 +250,41 @@ export default function NarrativePage() {
                 />
               </div>
 
-              <div className="flex-1">
+              <div>
+                <label className="mb-2 block text-sm text-muted-foreground">이미지 첨부 (선택)</label>
+                {newItem.imageUrl ? (
+                  <div className="relative group w-fit">
+                    <Image 
+                      src={newItem.imageUrl} 
+                      alt="Preview" 
+                      width={200}
+                      height={150}
+                      className="max-h-40 w-auto rounded-sm border border-border" 
+                    />
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="absolute -top-2 -right-2 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity bg-destructive/90 text-destructive-foreground hover:bg-destructive"
+                      onClick={() => setNewItem({ ...newItem, imageUrl: undefined })}
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </div>
+                ) : (
+                  <label className="flex w-fit cursor-pointer items-center justify-center rounded-sm border border-dashed border-input bg-background px-4 py-3 hover:border-primary/50 hover:bg-accent transition-colors">
+                    <ImagePlus className="mr-2 h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm text-muted-foreground">이미지 업로드</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleImageUpload}
+                    />
+                  </label>
+                )}
+              </div>
+
+              <div className="flex-1 min-h-[300px]">
                 <label className="mb-2 block text-sm text-muted-foreground">내용</label>
                 <textarea
                   value={newItem.content}
